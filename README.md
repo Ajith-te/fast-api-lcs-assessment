@@ -137,4 +137,4 @@ Redoc UI → http://127.0.0.1:8000/redoc
 project_id,title,description,status,assigned_to
 
 ## 🏁 Summary
-Production-ready FastAPI backend following clean architecture, migrations, and background processing.
+FastAPI backend following architecture, migrations, and background processing.
