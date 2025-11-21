@@ -80,26 +80,43 @@ requirements.txt
 ---
 
 ### 1. Clone Repository
+```
 git clone https://github.com/Ajith-te/fast-api-lcs-assessment.git
+```
+
 
 ### 2. Create Virtual Environment
+```
 python -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate (Windows)
+```
+
 
 ### 3. Install Dependencies
+```
 pip install -r requirements.txt
+```
 
 ### 4. Configure .env
+```
 DATABASE_URL=postgresql://postgres:password@localhost:5432/fastapi_assessment
 JWT_SECRET_KEY=your_jwt_secret
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
+```
+
 
 ### 5. Run Migrations
+```
 alembic upgrade head
+```
+
 
 ### 6. Start Application
+```
 uvicorn app.main:app --reload
+```
+
 
 ## 📚 API Documentation
 Swagger UI → http://127.0.0.1:8000/docs  
