@@ -15,32 +15,69 @@ This project implements a full FastAPI backend with:
 ### 🔐 Authentication & Authorization
 - User registration with bcrypt password hashing  
 - JWT login  
-- Admin → full access  
-- User → limited to assigned projects/tasks  
+- Admin has full access
+- Users only access assigned projects and tasks 
 
 ### 📁 Projects Module
+- Fields: id, name, description, created_by
 - Admin: Create, update, delete, list  
 - Users: Only view assigned projects  
 - Many-to-many relationship: Project ↔ User  
 
 ### 📝 Tasks Module
+- Fields: id, project_id, title, description, status assigned_to
 - Admin: Full CRUD  
 - Users: Only manage tasks assigned to them  
 - Task belongs to exactly one project  
 
 ### 📤 CSV Upload (Admin only)
-- Upload CSV containing multiple tasks  
-- Background task processes rows  
-  - Valid → inserted to DB  
-  - Invalid → exported to an `_errors.csv` file  
-- API provided to download latest error CSV  
+- Admin uploads a CSV containing multiple tasks
+- CSV file saved to `/uploads`
+- Background task processes rows:
+  - Valid rows → inserted into DB
+  - Invalid rows → written to `<filename>_errors.csv`
+- Download latest error file from:
+  `GET /upload/errors`
 
 ### 🛢 Database
 - PostgreSQL  
 - SQLAlchemy ORM  
 - Alembic migrations
 
-## 📦 Project Setup
+## 📦 Project Structure
+
+```
+fast_api_assessment/
+│── main.py
+│── database.py
+│── core/
+│     ├── security.py
+│     └── dependencies.py
+│     └── logs.py
+│── models/
+│     ├── user.py
+│     ├── project.py
+│     ├── task.py
+│     └── association.py
+│── schemas/
+│     ├── user.py
+│     ├── project.py
+│     ├── task.py
+│     └── auth.py
+│── routes/
+│     ├── auth.py
+│     ├── users.py
+│     ├── projects.py
+│     ├── tasks.py
+│     └── csv_upload.py
+│── services/
+│     └── csv_processor.py
+uploads/ (auto-created)
+.env
+requirements.txt
+```
+
+---
 
 ### 1. Clone Repository
 git clone https://github.com/Ajith-te/fast-api-lcs-assessment.git
