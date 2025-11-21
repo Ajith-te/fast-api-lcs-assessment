@@ -1,3 +1,4 @@
+ # settings + .env load
 import os
 from passlib.context import CryptContext
 from datetime import datetime, timedelta

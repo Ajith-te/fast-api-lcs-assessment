@@ -1,3 +1,4 @@
+# auth / role dependencies
 from fastapi import Depends, HTTPException
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session

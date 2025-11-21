@@ -40,7 +40,7 @@ def get_tasks(
     if current_user.role == "Admin":
         return db.query(Task).offset(skip).limit(limit).all()
     
-    # User → only tasks assigned to them
+    # User  only tasks assigned to them
     return db.query(Task).filter(Task.assigned_to == current_user.id)\
         .offset(skip).limit(limit).all()
   

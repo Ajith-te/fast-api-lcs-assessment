@@ -1,142 +1,86 @@
 # FastAPI Developer Assessment
 
-A complete FastAPI backend demonstrating:
+This project implements a full FastAPI backend with:
 
 - User authentication (JWT)
-- Role-based authorization (Admin / User)
-- CRUD operations for Projects & Tasks
-- CSV upload and background processing
-- Error CSV generation and download API
-- PostgreSQL integration using SQLAlchemy ORM
+- Role-based authorization (Admin/User)
+- CRUD operations for Projects and Tasks
+- CSV upload + background processing
+- Error CSV generation for invalid rows
+- Alembic migrations for database schema
+- PostgreSQL + SQLAlchemy ORM
 
----
+## 🚀 Features Implemented
 
-## 🚀 Features
+### 🔐 Authentication & Authorization
+- User registration with bcrypt password hashing  
+- JWT login  
+- Admin → full access  
+- User → limited to assigned projects/tasks  
 
-### ✔ 1. Authentication & Authorization
-- User registration with hashed passwords (bcrypt)
-- JWT-based login
-- Admin has full access
-- Users only access assigned projects and tasks
+### 📁 Projects Module
+- Admin: Create, update, delete, list  
+- Users: Only view assigned projects  
+- Many-to-many relationship: Project ↔ User  
 
-### ✔ 2. Project Module (CRUD)
-- Fields: id, name, description, created_by
-- Many-to-many relation: Projects ↔ Users
-- Admin: full CRUD
-- User: only view assigned projects
+### 📝 Tasks Module
+- Admin: Full CRUD  
+- Users: Only manage tasks assigned to them  
+- Task belongs to exactly one project  
 
-### ✔ 3. Task Module (CRUD)
-- Fields: id, project_id, title, description, status, assigned_to
-- Admin: full CRUD
-- User: can manage only their assigned tasks
+### 📤 CSV Upload (Admin only)
+- Upload CSV containing multiple tasks  
+- Background task processes rows  
+  - Valid → inserted to DB  
+  - Invalid → exported to an `_errors.csv` file  
+- API provided to download latest error CSV  
 
-### ✔ 4. CSV Upload & Background Processing
-- Admin uploads a CSV containing multiple tasks
-- CSV file saved to `/uploads`
-- Background task processes rows:
-  - Valid rows → inserted into DB
-  - Invalid rows → written to `<filename>_errors.csv`
-- Download latest error file from:
-  `GET /upload/errors`
+### 🛢 Database
+- PostgreSQL  
+- SQLAlchemy ORM  
+- Alembic migrations
 
-### ✔ 5. PostgreSQL + SQLAlchemy ORM
-- Connected using `.env` configuration
-- Automatic table creation on startup
+## 📦 Project Setup
 
----
+### 1. Clone Repository
+git clone https://github.com/Ajith-te/fast-api-lcs-assessment.git
 
-## 📁 Project Structure
+### 2. Create Virtual Environment
+python -m venv venv
+source venv/bin/activate  # or venv\Scripts\activate (Windows)
 
-```
-fast_api_assessment/
-│── main.py
-│── database.py
-│── core/
-│     ├── security.py
-│     └── dependencies.py
-│     └── logs.py
-│── models/
-│     ├── user.py
-│     ├── project.py
-│     ├── task.py
-│     └── association.py
-│── schemas/
-│     ├── user.py
-│     ├── project.py
-│     ├── task.py
-│     └── auth.py
-│── routes/
-│     ├── auth.py
-│     ├── users.py
-│     ├── projects.py
-│     ├── tasks.py
-│     └── csv_upload.py
-│── services/
-│     └── csv_processor.py
-uploads/ (auto-created)
-.env
-requirements.txt
-```
-
----
-
-## 🔧 Environment Setup
-
-### Install Dependencies
-```
+### 3. Install Dependencies
 pip install -r requirements.txt
-```
 
-### Create `.env`
-```
-DATABASE_URL=postgresql://postgres:password@localhost:5432/fastapi_db
-JWT_SECRET_KEY=your_secret_key
+### 4. Configure .env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/fastapi_assessment
+JWT_SECRET_KEY=your_jwt_secret
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
-REFRESH_TOKEN_EXPIRE_DAYS=7
-```
 
----
+### 5. Run Migrations
+alembic upgrade head
 
-## ▶️ Run the Application
-
-```
+### 6. Start Application
 uvicorn app.main:app --reload
-```
 
-### API Docs:
-- Swagger: http://127.0.0.1:8000/docs
-- ReDoc: http://127.0.0.1:8000/redoc
+## 📚 API Documentation
+Swagger UI → http://127.0.0.1:8000/docs  
+Redoc UI → http://127.0.0.1:8000/redoc  
 
----
+## 🔌 API Endpoints Summary
+(Shortened for file — use your full API list in GitHub.)
 
-## 🧪 Testing CSV Upload
+- POST /auth/register  
+- POST /auth/login  
+- GET /users/me  
+- GET /projects/  
+- POST /tasks/  
+- POST /upload/csv  
+- GET /upload/errors  
 
-### Endpoint:
-```
-POST /upload/csv
-```
-
-### Example CSV:
-```
+## 🧪 CSV Format
 project_id,title,description,status,assigned_to
-1,Login Task,Implement JWT,Pending,2
-1,Invalid Task ID,Invalid entry,Pending,999
-```
 
-### Download Error CSV:
-```
-GET /upload/errors
-```
-
----
-
-## 🏁 Conclusion
-This project demonstrates clean implementation of:
-- FastAPI architecture
-- SQLAlchemy ORM
-- Authentication & authorization
-- Background task processing
-- File handling
-- Error handling
-
+## 🏁 Summary
+Production-ready FastAPI backend following clean architecture, migrations, and background processing.
