@@ -1,0 +1,34 @@
+# Python cache
+__pycache__/
+**/__pycache__/
+
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# Uploads directory (generated files)
+uploads/
+
+# Logs
+*.log
+core/logs/
+
+# Alembic cache only
+alembic/__pycache__/
+
+# We KEEP these:
+# ✓ alembic.ini      (should be committed)
+# ✓ alembic/versions (migration scripts MUST be committed)
+
+# IDE files
+.vscode/
+.idea/
+
+# Bytecode
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
