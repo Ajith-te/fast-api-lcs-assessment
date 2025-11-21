@@ -114,7 +114,7 @@ alembic upgrade head
 
 ### 6. Start Application
 ```
-uvicorn app.main:app --reload
+uvicorn main:app --reload
 ```
 
 
