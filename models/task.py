@@ -18,6 +18,7 @@ class Task(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    # Relations
+    # One-to-Many A project has many tasks.
     project = relationship("Project", back_populates="tasks")
+    # One-to-Many A user can have many tasks assigned.
     assigned_user = relationship("User", back_populates="tasks")

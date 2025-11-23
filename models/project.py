@@ -16,12 +16,14 @@ class Project(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    # Many-to-many relationship
+    # Many-to-many. A project can have multiple assigned users,
+    # and a user can be part of multiple projects.
     assigned_users = relationship(
         "User",
         secondary="project_user_association",
         back_populates="assigned_projects"
     )
 
-    # One-to-many: Project → Tasks
+    # One-to-many. A project contains multiple tasks,
+    # but each task belongs to only one project.
     tasks = relationship("Task", back_populates="project")
