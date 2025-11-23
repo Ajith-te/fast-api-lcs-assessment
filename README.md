@@ -152,4 +152,5 @@ Redoc UI → http://127.0.0.1:8000/redoc
 project_id,title,description,status,assigned_to
 
 ## 🏁 Summary
-FastAPI backend following architecture, migrations, and background processing.
+FastAPI
+This project is a complete backend system built using FastAPI, implementing authentication, authorization, project-task management, and background CSV processing. It follows production-grade structure and clean coding practices
