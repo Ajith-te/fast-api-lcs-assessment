@@ -12,8 +12,17 @@ router = APIRouter(prefix="/upload", tags=["CSV Upload"])
 
 def background_csv_handler(file_path: str, db: Session):
     """
-    Runs in background: processes CSV, inserts valid rows, 
-    writes invalid rows to *_errors.csv inside uploads folder.
+    Background task handler that processes a CSV file.
+
+    This function is intended to be executed as a BackgroundTasks job. It
+    delegates CSV parsing and database insertion to services.csv_processor.process_csv_file.
+
+    Args:
+        file_path (str): Full path to the uploaded CSV file on disk.
+        db (Session): SQLAlchemy session instance for database operations.
+
+    Returns:
+        None
     """
     process_csv_file(file_path, db)
 
@@ -24,7 +33,29 @@ async def upload_csv(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    # Accept only CSV
+    """
+    Upload endpoint for CSV files. Saves the uploaded CSV to the local uploads
+    directory and schedules background processing.
+
+    Validations:
+    - Only accepts files with content_type "text/csv" or "application/vnd.ms-excel".
+
+    Behavior:
+    - Ensures the uploads directory exists.
+    - Persists the uploaded file to disk.
+    - Adds a background task to process the CSV (inserts valid rows, writes invalid rows to *_errors.csv).
+
+    Args:
+        background_tasks (BackgroundTasks): FastAPI BackgroundTasks instance for scheduling work.
+        file (UploadFile): Uploaded file object from the client.
+        db (Session): SQLAlchemy session injected via dependency.
+
+    Raises:
+        HTTPException: 400 if the uploaded file is not a CSV.
+
+    Returns:
+        dict: A confirmation message that processing will run in the background.
+    """
     if file.content_type not in ["text/csv", "application/vnd.ms-excel"]:
         raise HTTPException(status_code=400, detail="Invalid file format. Only CSV allowed.")
 
@@ -44,6 +75,19 @@ async def upload_csv(
 
 @router.get("/errors", dependencies=[Depends(require_admin)])
 def download_error_csv():
+    """
+    Returns the most recent error CSV produced by processing uploads.
+
+    Looks for files in the uploads directory that end with "_errors.csv". If none
+    are found, returns a JSON message indicating no error CSVs are available.
+    Otherwise returns a FileResponse for the latest error CSV (by creation time).
+
+    Args:
+        None
+
+    Returns:
+        FileResponse or dict: FileResponse for the newest *_errors.csv, or a dict message if none exist.
+    """
     upload_dir = "uploads"
 
     # Get all *_errors.csv files
