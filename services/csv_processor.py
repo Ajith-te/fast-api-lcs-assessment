@@ -28,22 +28,32 @@ def process_csv_file(file_path: str, db: Session):
                 required = ["project_id", "title", "description", "status", "assigned_to"]
                 if any(field not in row or not row[field] for field in required):
                     raise ValueError("Missing required fields")
-
-                project = db.query(Project).filter(Project.id == int(row["project_id"])).first()
+               
+                project_id = int(row["project_id"])
+                user_id = int(row["assigned_to"])
+               
+                project = db.query(Project).filter(Project.id == project_id).first()
                 if not project:
-                    raise ValueError("Invalid project_id")
+                    raise ValueError(f"Invalid project_id {project_id}")
 
-                user = db.query(User).filter(User.id == int(row["assigned_to"])).first()
+
+                user = db.query(User).filter(User.id == user_id).first()
                 if not user:
-                    raise ValueError("Invalid assigned_to user")
-
+                    raise ValueError(f"Invalid assigned_to {user_id}")
+                
+                if user not in project.assigned_users:
+                    raise ValueError(
+                        f"User {user_id} not assigned to project {project_id}"
+                    )
+                
                 task = Task(
-                    project_id=int(row["project_id"]),
+                    project_id=project_id,
                     title=row["title"],
                     description=row["description"],
                     status=row["status"],
-                    assigned_to=int(row["assigned_to"])
+                    assigned_to=user_id
                 )
+
                 db.add(task)
 
                 logger.info(f"Inserted task: {row['title']}")

@@ -12,18 +12,36 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
 @router.post("/", response_model=TaskResponse, dependencies=[Depends(require_admin)])
-def create_task(data: TaskCreate, db: Session = Depends(get_db)):
+def create_task(
+    data: TaskCreate,
+    db: Session = Depends(get_db),
+):
+    # 1. Check project exists
     project = db.query(Project).filter(Project.id == data.project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project does not exist")
 
+    # 2. Check user exists
+    user = db.query(User).filter(User.id == data.assigned_to).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Assigned user does not exist")
+
+    # 3. Check that user is assigned to this project
+    if user not in project.assigned_users:
+        raise HTTPException(
+            status_code=400,
+            detail="User is not assigned to this project, cannot assign task"
+        )
+
+    # 4. Create task
     task = Task(
         title=data.title,
         description=data.description,
         status=data.status,
         project_id=data.project_id,
-        assigned_to=data.assigned_to
+        assigned_to=data.assigned_to,
     )
+
     db.add(task)
     db.commit()
     db.refresh(task)
@@ -44,6 +62,24 @@ def get_tasks(
     return db.query(Task).filter(Task.assigned_to == current_user.id)\
         .offset(skip).limit(limit).all()
   
+
+
+@router.get("/{task_id}", response_model=TaskResponse)
+def get_task(
+    task_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    task = db.query(Task).filter(Task.id == task_id).first()
+
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    if current_user.role != "Admin" and task.assigned_to != current_user.id:
+        raise HTTPException(status_code=403, detail="Not allowed")
+
+    return task
+
 
 @router.put("/{task_id}", response_model=TaskResponse)
 def update_task(

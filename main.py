@@ -23,4 +23,4 @@ app.include_router(users_router)
 
 @app.get("/")
 def Home():
-    return {"message": "FastAPI backend running successfully!"}
+    return {"message": "Backend running successfully v:0.1"}

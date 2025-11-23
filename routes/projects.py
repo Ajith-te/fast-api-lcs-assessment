@@ -53,6 +53,31 @@ def get_projects(
     return current_user.assigned_projects[skip : skip + limit]
 
 
+@router.get("/{project_id}", response_model=ProjectResponse)
+def get_project_by_id(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Fetch project from DB
+    project = db.query(Project).filter(Project.id == project_id).first()
+
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    if current_user.role == "Admin":
+        return project
+
+    if project not in current_user.assigned_projects:
+        raise HTTPException(
+            status_code=403, detail="You are not allowed to view this project"
+        )
+
+    return project
+
+
+
+
 @router.put("/{project_id}", response_model=ProjectResponse)
 def update_project(
     project_id: int,
