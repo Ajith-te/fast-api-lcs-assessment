@@ -8,12 +8,13 @@ from core.dependencies import get_current_user, require_admin
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-
+# View current user's profile
 @router.get("/my_profile", response_model=UserResponse)
 def get_my_profile(current_user: User = Depends(get_current_user)):
     return current_user
 
 
+# View all users (admin only)
 @router.get("/", response_model=list[UserResponse], dependencies=[Depends(require_admin)])
 def get_all_users(
     skip: int = 0,
@@ -24,6 +25,7 @@ def get_all_users(
     return users
 
 
+# View user by ID (admin only)
 @router.get("/{user_id}", response_model=UserResponse, dependencies=[Depends(require_admin)])
 def get_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()

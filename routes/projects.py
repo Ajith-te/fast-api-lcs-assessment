@@ -11,7 +11,7 @@ from core.dependencies import get_current_user, require_admin
 
 router = APIRouter(prefix="/projects", tags=["Projects"])
 
-
+# Create new project
 @router.post("/", response_model=ProjectResponse)
 def create_project(
     data: ProjectCreate,
@@ -40,6 +40,7 @@ def create_project(
     return project
 
 
+# View all projects
 @router.get("/", response_model=list[ProjectResponse])
 def get_projects(
     skip: int = 0,
@@ -53,6 +54,7 @@ def get_projects(
     return current_user.assigned_projects[skip : skip + limit]
 
 
+# View project by ID
 @router.get("/{project_id}", response_model=ProjectResponse)
 def get_project_by_id(
     project_id: int,
@@ -76,8 +78,7 @@ def get_project_by_id(
     return project
 
 
-
-
+# Update project by ID
 @router.put("/{project_id}", response_model=ProjectResponse)
 def update_project(
     project_id: int,
@@ -106,6 +107,7 @@ def update_project(
     return project
 
 
+# Delete project by ID
 @router.delete("/{project_id}")
 def delete_project(
     project_id: int,

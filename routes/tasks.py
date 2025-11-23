@@ -10,18 +10,16 @@ from core.dependencies import get_current_user, require_admin
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
-
+# Create new task
 @router.post("/", response_model=TaskResponse, dependencies=[Depends(require_admin)])
 def create_task(
     data: TaskCreate,
     db: Session = Depends(get_db),
 ):
-    # 1. Check project exists
     project = db.query(Project).filter(Project.id == data.project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project does not exist")
 
-    # 2. Check user exists
     user = db.query(User).filter(User.id == data.assigned_to).first()
     if not user:
         raise HTTPException(status_code=404, detail="Assigned user does not exist")
@@ -33,7 +31,6 @@ def create_task(
             detail="User is not assigned to this project, cannot assign task"
         )
 
-    # 4. Create task
     task = Task(
         title=data.title,
         description=data.description,
@@ -48,6 +45,7 @@ def create_task(
     return task
 
 
+# View all task
 @router.get("/", response_model=list[TaskResponse])
 def get_tasks(
     skip: int = 0,
@@ -63,7 +61,7 @@ def get_tasks(
         .offset(skip).limit(limit).all()
   
 
-
+# View task by ID
 @router.get("/{task_id}", response_model=TaskResponse)
 def get_task(
     task_id: int,
@@ -81,6 +79,7 @@ def get_task(
     return task
 
 
+# Update task by ID
 @router.put("/{task_id}", response_model=TaskResponse)
 def update_task(
     task_id: int,
@@ -111,8 +110,7 @@ def update_task(
     return task
 
 
-
-
+# Delete task by ID
 @router.delete("/{task_id}")
 def delete_task(
     task_id: int,

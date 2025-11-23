@@ -10,6 +10,7 @@ from core.security import create_refresh_token, hash_password, refresh_access_to
 router = APIRouter(tags=["Authentication"])
 
 
+# User registration endpoint
 @router.post("/register", response_model=UserResponse)
 def register_user(data: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.email == data.email).first()
@@ -29,6 +30,7 @@ def register_user(data: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
+# User login endpoint
 @router.post("/login", response_model=TokenResponse)
 def login(data: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == data.email).first()
@@ -46,6 +48,7 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     }
 
 
+# Token refresh endpoint
 @router.post("/refresh")
 def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
     access_token = refresh_access_token(refresh_token)

@@ -10,6 +10,7 @@ from fastapi.responses import FileResponse
 router = APIRouter(prefix="/upload", tags=["CSV Upload"])
 
 
+# Background task to process CSV
 def background_csv_handler(file_path: str, db: Session):
     """
     Background task handler that processes a CSV file.
@@ -27,6 +28,7 @@ def background_csv_handler(file_path: str, db: Session):
     process_csv_file(file_path, db)
 
 
+# CSV upload endpoint
 @router.post("/csv", dependencies=[Depends(require_admin)])
 async def upload_csv(
     background_tasks: BackgroundTasks,
@@ -71,8 +73,7 @@ async def upload_csv(
     return {"message": "CSV uploaded. Processing in background."}
 
 
-
-
+# Download the most recent error CSV
 @router.get("/errors", dependencies=[Depends(require_admin)])
 def download_error_csv():
     """

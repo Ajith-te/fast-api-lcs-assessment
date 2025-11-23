@@ -5,6 +5,7 @@ from sqlalchemy import DateTime, func
 from database import Base
 
 
+# Project model
 class Project(Base):
     __tablename__ = "projects"
 

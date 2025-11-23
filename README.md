@@ -50,10 +50,12 @@ This project implements a full FastAPI backend with:
 fast_api_assessment/
 │── main.py
 │── database.py
+│── alembic/
+│     └── env.py
 │── core/
 │     ├── security.py
 │     └── dependencies.py
-│     └── logs.py
+│     └── logger.py
 │── models/
 │     ├── user.py
 │     ├── project.py
@@ -73,6 +75,8 @@ fast_api_assessment/
 │── services/
 │     └── csv_processor.py
 uploads/ (auto-created)
+.gitignore
+alembic.ini
 .env
 requirements.txt
 ```
@@ -126,12 +130,23 @@ Redoc UI → http://127.0.0.1:8000/redoc
 (Shortened for file — use your full API list in GitHub.)
 
 - POST /auth/register  
-- POST /auth/login  
-- GET /users/me  
-- GET /projects/  
-- POST /tasks/  
+- POST /auth/login
+- POST /auth/refresh
+- GET  /users/
+- GET  /users/my_profile
+- GET  /users/{user_id}
+- POST /projects/
+- GET  /projects/
+- GET  /projects/{project_id}
+- PUT  /projects/{project_id}
+- DELETE /projects/{project_id}
+- POST  /tasks/
+- GET   /tasks/
+- GET   /tasks/{task_id}
+- POST  /tasks/{task_id}
+- DELETE  /tasks/{task_id}
 - POST /upload/csv  
-- GET /upload/errors  
+- GET  /upload/errors
 
 ## 🧪 CSV Format
 project_id,title,description,status,assigned_to
