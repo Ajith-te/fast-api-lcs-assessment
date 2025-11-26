@@ -121,7 +121,12 @@ alembic upgrade head
 uvicorn main:app
 ```
 
-
+### 6. user role change to admin (Postgresql shell)
+```
+UPDATE users 
+SET role = 'Admin' 
+WHERE email = 'admin@example.com';
+```
 ## 📚 API Documentation
 Swagger UI → http://127.0.0.1:8000/docs  
 Redoc UI → http://127.0.0.1:8000/redoc  
